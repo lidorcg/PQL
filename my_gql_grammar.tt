@@ -1,0 +1,103 @@
+require "./tokens"
+
+grammar MyGqlGrammar
+  rule root
+    '{' o:objs '}' {
+      def token
+        Token::Root.new o.tokens
+      end
+    }
+  end
+
+  rule objs
+    h:obj t:(',' o:obj)* {
+      def tokens
+        [h.token] + t.elements.map do |reg| reg.o.token end
+      end
+    }
+  end
+
+  rule obj
+    k:key ':' '{' e:exps '}' {
+      def token
+        Token::Obj.new k.token, e.tokens
+      end
+    }
+  end
+
+  rule exps
+    h:exp t:(',' e:exp)* {
+      def tokens
+        [h.token] + t.elements.map do |reg| reg.e.token end
+      end
+    }
+  end
+
+  rule exp
+    e:(get / set / ptrn / obj) {
+      def token
+        e.token
+      end
+    }
+  end
+
+
+  rule get
+    '?' k:key {
+      def token
+        Token::Get.new k.token
+      end
+    }
+  end
+
+  rule set
+    '!' p:ptrn {
+      def token
+        Token::Set.new p.token
+      end
+    }
+  end
+
+  rule ptrn
+    k:key ':' v:val {
+      def token
+        Token::Pattern.new k.token, v.token
+      end
+    }
+  end
+
+  rule key
+    h:[a-zA-Z] t:[a-zA-Z0-9]* {
+      def token
+        Token::Key.new (h.text_value + t.text_value)
+      end
+    }
+  end
+
+  rule val
+    s:str {
+      def token
+        Token::Val.new s.val
+      end
+    }
+  end
+
+  rule str
+    ('"' s:str_c '"') {
+      def val
+        s.text_value
+      end
+    }
+    /
+    ("'" str_c "'") {
+      def val
+        s.text_value
+      end
+    }
+  end
+
+  rule str_c
+    (!('"' / "'") (. / "\n"))*
+  end
+
+end
