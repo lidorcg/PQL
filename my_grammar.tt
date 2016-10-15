@@ -1,5 +1,0 @@
-grammar MyGrammar
-  rule key
-    h:[a-zA-Z] t:[a-zA-Z0-9]*
-  end
-end

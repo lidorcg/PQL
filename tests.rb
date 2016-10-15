@@ -1,9 +1,9 @@
 require 'rubygems'
 require './tokens'
 require 'treetop'
-Treetop.load 'my_gql_grammar'
+Treetop.load 'pql_grammar'
 
-parser = MyGqlGrammarParser.new
+parser = PqlGrammarParser.new
 # positive tests
 # exp
 puts parser.parse('{key:{?key,?key:"value"}}'.gsub(/\s+/, ''))

@@ -1,6 +1,6 @@
 require "./tokens"
 
-grammar MyGqlGrammar
+grammar PqlGrammar
   rule root
     '{' o:objs '}' {
       def token
